@@ -1,0 +1,12 @@
+---
+title: "Individual Lab 3"
+author: "Aaron Hanrahan"
+date: "3/3/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Question 6
