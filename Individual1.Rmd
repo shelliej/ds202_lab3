@@ -24,18 +24,49 @@ salaryOrdered = c("Lt $1000", "$1000 to 2999", "$3000 to 3999", "$4000 to 4999",
 
 dat <- filter(dat, !(`Respondents income` %in% unknown)
               & !(`Number of hours usually work a week` %in% unknown)
-              & !(`General happiness` %in% unknown))
+              & !(`General happiness` %in% unknown)
+              & !(`Highest year of school completed` %in% unknown))
 
 dat <- select(dat, -`Political party affiliation`, -`Ballot used for interview`)
 
-dat$`Respondents income` = factor(dat$`Respondents income`, levels = salaryOrdered)
+dat$`Highest year of school completed` = as.numeric(as.character(dat$`Highest year of school completed`))
+dat$`Number of hours usually work a week` = as.numeric(as.character(dat$`Number of hours usually work a week`))
+
+dat <- filter(dat, `Highest year of school completed` > 7)
+
+dat$`Respondents income` <- factor(dat$`Respondents income`, levels = salaryOrdered)
+dat$`Highest year of school completed` <- factor(dat$`Highest year of school completed`)
+dat$`Number of hours usually work a week` <- factor(dat$`Number of hours usually work a week`)
 
 p <- ggplot(dat, aes(x=`Respondents income`, fill = `General happiness`)) + geom_bar() 
+```
 
+The first question we wanted to explore was pretty simple; are you more happy if you make more money? 
+
+```{r}
 p + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + ggtitle("General Happiness per Income")
+```
 
+The first graph just shows the general respondent's happiness per their stated income. As can be seen by analyzing the results, people who make more money on average are going to be more happy than not. However, across the board it does not directly appear that making more money straight up makes you more happy.
+
+```{r}
 p + facet_wrap(~dat$`Respondents sex`) + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + ggtitle("Happiness per Income Women vs. Men")
+```
 
+Expanding on the original idea, the next graph looks at the difference between females and males. It is fairly clear that there is little tangible difference between the two sexes and their happiness relative to income.
+
+```{r}
 p + facet_wrap(~dat$`Marital status`, scales = "free") + ggtitle("Happiness per Income by Marital Status") + theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
 ```
 
+The last graph compares marital status to happiness relative to income. As somewhat expected, respondents who are in generally less happy situations such as widowed are not as happy, even though they are making a lot of money.
+
+It does appear that the age old statement "money can't buy happiness" is showing throughout this analysis. It does make sense, as most people regardless of income suffer from similar un-happy events in life such as the passing of a loved one. 
+
+Another question we wanted to look at was the relationship between the years of schooling and how many hours a week the respective respondent was working.
+```{r}
+g <- ggplot(dat, aes(x=`Highest year of school completed`, fill = `Number of hours usually work a week`)) + geom_bar(position = 'fill')
+g + ggtitle('Hours Worked per Week vs. Year Schooling') + scale_color_discrete(breaks = c(0,20), name = "hours")
+```
+
+As you can see, there is a slight correlation between higher schooling and working more hours. This does make sense as a higher education could mean a more specialized job that does not align with the norms of a 40-hour work week.
