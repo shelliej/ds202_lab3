@@ -9,4 +9,29 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+```{r, echo = FALSE, warning = FALSE}
+library(tidyverse)
+library(ggplot2)
+dat <- readxl::read_xls('/Users/Aaron/Desktop/IowaState[Current]/DS202/GSS.xls')
+```
+
 ### Question 6
+```{r}
+unknown = c("Not applicable", "Refused", "No answer", "Don't know")
+salaryOrdered = c("Lt $1000", "$1000 to 2999", "$3000 to 3999", "$4000 to 4999",
+                  "$5000 to 5999", "$6000 to 6999", "$7000 to 7999", "$8000 to 9999",
+                  "$10000 - 14999", "$15000 - 19999", "$20000 - 24999", "$25000 or more")
+
+dat <- filter(dat, !(`Respondents income` %in% unknown)
+              & !(`Number of hours usually work a week` %in% unknown)
+              & !(`General happiness` %in% unknown))
+
+dat <- select(dat, -`Political party affiliation`, -`Marital status`,
+              -`Ballot used for interview`, -`Respondents sex`)
+
+dat$`Respondents income` = factor(dat$`Respondents income`, levels = salaryOrdered)
+
+p <- ggplot(dat, aes(x=`Respondents income`, fill = `General happiness`)) + geom_bar() + ggtitle("General Happiness per Income")
+p + theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
