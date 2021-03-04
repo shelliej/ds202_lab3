@@ -26,12 +26,16 @@ dat <- filter(dat, !(`Respondents income` %in% unknown)
               & !(`Number of hours usually work a week` %in% unknown)
               & !(`General happiness` %in% unknown))
 
-dat <- select(dat, -`Political party affiliation`, -`Marital status`,
-              -`Ballot used for interview`, -`Respondents sex`)
+dat <- select(dat, -`Political party affiliation`, -`Ballot used for interview`)
 
 dat$`Respondents income` = factor(dat$`Respondents income`, levels = salaryOrdered)
 
-p <- ggplot(dat, aes(x=`Respondents income`, fill = `General happiness`)) + geom_bar() + ggtitle("General Happiness per Income")
-p + theme(axis.text.x = element_text(angle = 45, hjust = 1))
+p <- ggplot(dat, aes(x=`Respondents income`, fill = `General happiness`)) + geom_bar() 
+
+p + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + ggtitle("General Happiness per Income")
+
+p + facet_wrap(~dat$`Respondents sex`) + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + ggtitle("Happiness per Income Women vs. Men")
+
+p + facet_wrap(~dat$`Marital status`, scales = "free") + ggtitle("Happiness per Income by Marital Status") + theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
 ```
 
