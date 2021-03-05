@@ -9,4 +9,52 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+```{r}
+library(dplyr)
+library(classdata)
+library(ggplot2)
+dat <- readxl::read_xls('C:/Users/Ritz/Desktop/DS202/GSS.xls')
+```
+##Renaming and cleaning
+```{r}
+dat<- rename(dat, 'year' = 'Gss year for this respondent')
+dat<- rename(dat, 'happylvl' = 'General happiness')
+dat<- rename(dat, 'polParty' = 'Political party affiliation')
+dat<- rename(dat, 'income' = 'Respondents income')
+dat<- rename(dat, 'gender' = 'Respondents sex')
+dat<- rename(dat, 'education' = 'Highest year of school completed')
+dat<- rename(dat, 'wedded' = 'Marital status')
+dat<- rename(dat, 'hourperweek' = 'Number of hours usually work a week')
+dat<- rename(dat, 'id' = 'Respondent id number')
+dat<- rename(dat, 'ballot' = 'Ballot used for interview')
+
+```
+
 ### Question 1
+
+### Question 2
+
+### Question 3
+```{r}
+happylvl <- filter(dat, happylvl == 'Very happy' | happylvl == 'Pretty happy')
+p <- ggplot(happylvl, aes(x = happylvl, y = wedded)) + geom_count()
+p + ggtitle('Marital Status vs. Happiness') + xlab('happylvl') + ylab('Marital Status')
+# getting numerical count
+happylvl %>% count(wedded)
+```
+It looks like(disregarding no answer) People who are married tend to be more pretty happy and very happy(aprox. 25k) while people separated,divorced, or widowed tend not to be happy as much.
+### Question 4
+```{r}
+q = dat %>% group_by(`wedded`, `polParty`) %>%
+  filter(`happylvl` == "Pretty happy" | `happylvl` == "Very happy") %>%
+  summarize(`happylvl.n` = n()) %>%
+  mutate(`happylvl.per2` = `happylvl.n`/ sum(`happylvl.n`))
+q %>%
+  ggplot(aes(x = `wedded`, y = `happylvl.per2`)) +
+  geom_bar(stat = 'identity') + theme(axis.text.x = element_text(angle = 90)) +
+  facet_wrap(~`polParty`)
+```
+Seems like Political party affiliation does play a part in happiness. Looks like people who are leaning towards democrats tend to have a higher happiness level while republicans and independents tend to have lower happiness levels than democrats.
+### Question 5
+
+### Question 6
