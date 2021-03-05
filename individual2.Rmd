@@ -1,0 +1,58 @@
+---
+title: "individual2"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(ggplot2)
+library(tidyverse)
+library(readxl)
+dat <- readxl::read_xls('GSS.xls')
+options(warn = -1)
+```
+
+## Renaming the Variables
+```{r}
+library(dplyr)
+dat <- rename(dat, 'year' = 'Gss year for this respondent')
+dat <- rename(dat, 'happylvl' = 'General happiness')
+dat <- rename(dat, 'polparty' = 'Political party affiliation')
+dat <- rename(dat, 'income' = 'Respondents income')
+dat <- rename(dat, 'gender' = 'Respondents sex')
+dat <- rename(dat, 'education' = 'Highest year of school completed')
+dat <- rename(dat, 'wedded' = 'Marital status')
+dat <- rename(dat, 'hourperweek' = 'Number of hours usually work a week')
+dat <- rename(dat, 'id' = 'Respondent id number')
+dat <- rename(dat, 'ballot' = 'Ballot used for interview')
+```
+
+## Question 1
+```{r}
+dat %>% 
+  group_by(wedded) %>%
+  summarize(avg_edu = mean(as.numeric(education), na.rm=TRUE)) %>%
+  arrange(avg_edu)
+```
+```{r}
+dat %>% 
+  group_by(wedded) %>%
+  summarize(avg_edu = mean(as.numeric(education), na.rm=TRUE)) %>%
+  ggplot(aes(x=reorder(wedded, avg_edu), weight=avg_edu))+geom_bar(aes(fill=wedded), show.legend = FALSE) + xlab("Marital Status") + ylab("Average Number of Years Educated")
+```
+
+
+## Question 2
+```{r}
+better_edu <- dat %>% 
+  group_by(wedded) %>%
+  filter(education > mean(as.numeric(education), na.rm=TRUE))
+
+str(better_edu)
+```
+
+
+
